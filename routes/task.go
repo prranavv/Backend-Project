@@ -117,3 +117,37 @@ func DeleteTask(c *fiber.Ctx) error {
 	}
 	return c.Status(200).JSON("Successfully deleted")
 }
+
+func UpdateTask(c *fiber.Ctx) error {
+	id, err := c.ParamsInt("task_id")
+	if err != nil {
+		return c.Status(400).JSON("Enter a number")
+	}
+	var task models.Task
+	if err := findtaskbyid(id, &task); err != nil {
+		return c.Status(400).SendString("task not found")
+	}
+	type UpdateTask struct {
+		Task_Name string `json:"task_name"`
+		Priority  string `json:"priority"`
+		Status    string `json:"status"`
+	}
+	var newtask UpdateTask
+	if err := c.BodyParser(&newtask); err != nil {
+		return c.Status(400).JSON(err.Error())
+	}
+	flag := 0
+	if newtask.Priority == "low" || newtask.Priority == "mid" || newtask.Priority == "high" {
+		flag = flag + 1
+	}
+	if flag == 0 {
+		return c.Status(400).SendString("Enter valid priority")
+	}
+
+	task.Task_Name = newtask.Task_Name
+	task.Priority = newtask.Priority
+	task.Status = newtask.Status
+	database.Database.Db.Save(&task)
+	responsetask := CreateTaskDTO(task)
+	return c.Status(200).JSON(responsetask)
+}

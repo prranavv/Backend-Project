@@ -12,7 +12,7 @@ func setuproutes(app *fiber.App) {
 	app.Get("/tasks/:task_id", routes.Gettask)
 	app.Put("/tasks/:task_id", routes.ChangeStatus) //need to use query params eg localhost:3000/tasks/1/?status=finished
 	app.Delete("/tasks/:task_id", routes.DeleteTask)
-
+	app.Put("/tasks/update/:task_id", routes.UpdateTask)
 }
 
 func main() {
