@@ -37,7 +37,12 @@ func CreateTask(c *fiber.Ctx) error {
 	if flag == 0 {
 		return c.Status(400).SendString("Enter valid priority")
 	}
-	task.Status = "Pending"
+	if task.Status == "pending" || task.Status == "finished" {
+		flag = flag + 1
+	}
+	if flag == 1 {
+		return c.Status(400).SendString("Enter a valid status (pending or finished)")
+	}
 	database.Database.Db.Create(&task)
 	responsetask := CreateTaskDTO(task)
 	return c.Status(200).JSON(responsetask)
