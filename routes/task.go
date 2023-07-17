@@ -104,13 +104,13 @@ func ChangeStatus(c *fiber.Ctx) error {
 //Delete Tasks
 
 func DeleteTask(c *fiber.Ctx) error {
-	id, err := c.ParamsInt("book_id")
+	id, err := c.ParamsInt("task_id")
 	if err != nil {
 		return c.Status(400).JSON("Enter a number")
 	}
 	var task models.Task
 	if err := findtaskbyid(id, &task); err != nil {
-		return c.Status(400).SendString("Book not found")
+		return c.Status(400).SendString("task not found")
 	}
 	if err := database.Database.Db.Delete(&task, "id=?", id).Error; err != nil {
 		return c.Status(404).JSON(err)
